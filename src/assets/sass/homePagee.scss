@@ -1,0 +1,70 @@
+.tmbdBody {
+  position: relative;
+  color: rgb(1, 1, 16);
+  width: 100%;
+  height: 50vh; /* Set the height */
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/src/assets/images/avengers-image.jpg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5; /* Adjust the opacity here */
+    z-index: -1; /* Ensure it stays behind the content */
+  }
+
+  &__tophead {
+    margin-top: auto;
+  }
+
+  &__searchInput {
+    border-radius: 12px;
+    border: none;
+    background-color: rgb(232, 243, 243);
+    width: 80%;
+  }
+  &__searchIcon {
+    color: rgb(180, 13, 13);
+    margin-left: -45px;
+    font-size: x-large;
+  }
+}
+
+.trending {
+  &__heading {
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    font-size: xx-large;
+    color:rgb(3, 37, 65);
+    padding: 5px;
+    
+  }
+}
+.trending-Card{
+  overflow-x: auto;
+  white-space: wrap;
+  font-size: small;
+  gap: 30px;
+  scrollbar-width: thin;
+
+  &__main{
+    width: 150px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgb(27, 26, 26);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out ;
+    &:hover{
+      transform: scale(1.07);
+    }
+  }
+  &__image{
+    width: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px rgb(93, 92, 92);
+  }
+}
+
