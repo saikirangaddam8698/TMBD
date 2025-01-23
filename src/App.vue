@@ -1,9 +1,10 @@
 <template>
   <div class="tmbd d-flex flex-column">
     <div class="tmbd__header tmbd-header  justify-content-center align-items-center">
-      <div class="d-flex justify-content-between p-3" :style="{ backgroundColor: 'rgba(3, 37, 65)' }">
-        <a class="navbar-brand tmbd-header__image p-2" href="#"><img :src="require('@/assets/cinema_logo.jpg')" alt="brandLogo" height="70"
-            width="70" @click="goToHome"></a>
+      <div class="d-flex justify-content-between align-items-center p-3"
+        :style="{ backgroundColor: 'rgba(3, 37, 65)' }">
+        <a class="navbar-brand tmbd-header__image p-2" href="#"><img :src="require('@/assets/cinema_logo.jpg')"
+            alt="brandLogo" height="70" width="70" @click="goToHome"></a>
         <div class="tmbd__header-items d-flex justify-content-center align-items-center">
           <a class="nav-link" href="/moviespage">
             <h3 class="tmbd__header-link">Movies</h3>
@@ -18,13 +19,7 @@
             <h3 class="tmbd__header-link">More</h3>
           </a>
         </div>
-
-        <div class="tmbd__header-search d-flex justify-content-between align-items-center">
-          <input type="text" placeholder="search here" class="p-1">
-          <div class="input-group-text p-2 ms-1">
-            <i class="fas fa-search"></i>
-          </div>
-        </div>
+        <searchPage @search-text="searchTerm" />
       </div>
     </div>
 
@@ -62,14 +57,25 @@
 </template>
 
 <script>
+import searchPage from './components/tmbd/searchPage.vue';
 export default {
   name: 'App',
+  data() {
+    return {
+      searchText: '',
+    }
+  },
   components: {
-
+    searchPage,
   },
   methods: {
     goToHome() {
       this.$router.push({ name: "homePagee" });
+    },
+
+    searchTerm(data) {
+      this.searchText = data
+      console.log("prop data", this.searchText)
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
     <div class="tvshows row p-5">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in tvshowsData" :key="index">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in paginatedTvshows" :key="index">
             <div class="card tvshows__card tvshows-card p-3" @click="openModel(item)">
                 <img :src="getImageUrl(item.poster_path)" alt="poster" class="tvshows-card__image card-img-top">
                 <div class="card-body ">
@@ -40,37 +40,29 @@
 
 
 <script>
-import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 export default {
     name: 'tvshowsPage',
     data() {
         return {
-            tvshowsData: [],
             selectedtvshow: null,
 
         }
     },
+    computed: {
+        ...mapState(['tvshowsData', 'searchTxt']),
+        paginatedTvshows() {
+            if (!this.searchTxt) {
+                return this.tvshowsData;
+            }
+            const searchLower = this.searchTxt.toLowerCase();
+            return this.tvshowsData.filter(tvshow => tvshow.original_name.toLowerCase().includes(searchLower));
+        }
+    },
     methods: {
-        fetchtvshows() {
-            const config = {
-                headers: {
-                    accept: 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NGJlMWUzMTk2YzcwZmM2ZjUxOTEwYmFlN2JjZGRhZCIsIm5iZiI6MTcyOTY4MDczMi45MDEsInN1YiI6IjY3MThkNTVjYzc4MDJjYzUwMzU5YTcxMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mmd_oVE0cpvWbt-rGore0a7z864gQUWvcR87QE-Tg24'
-                }
-            };
-
-            axios
-                .get(
-                    'https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc',
-                    config
-                )
-                .then(response => {
-                    this.tvshowsData = response.data.results;
-                    console.log(response.data);
-                })
-                .catch(error => {
-                    console.error("error in fetching Tvshows", error);
-                });
+        ...mapActions(['fetchtvshows']),
+        fetchTvShows() {
+            this.$store.dispatch('fetchData', { apiType: 'tvshows' });
         },
         getImageUrl(path) {
             if (!path) {
@@ -88,8 +80,8 @@ export default {
         }
     },
     mounted() {
-        this.fetchtvshows();
-    }
+        this.fetchTvShows();
+    },
 
 }
 

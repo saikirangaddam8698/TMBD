@@ -1,15 +1,15 @@
 <template>
     <div class="movies row p-5">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in moviesData" :key="index">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in paginatedMovies" :key="index">
             <div class="card movies__card movies-card p-3" @click="openModel(item)">
-                <img :src="getImageUrl(item.poster_path)" alt="poster" class="movies-card__image card-img-top">
+                <img :src="getImageUrl(item.poster_path)" alt="poster" class="movies-card__image">
                 <div class="card-body">
-                    <h6 class="d-flex align-items-center justify-content-center movies-card__txt"><b>{{ item.title
-                            }}</b></h6>
-                    <p class="d-flex align-items-center justify-content-center"><b>{{ item.release_date }}</b></p>
+                    <h6 class="movies-card__txt"><b>{{ item.title }}</b></h6>
+                    <p><b>{{ item.release_date }}</b></p>
                 </div>
             </div>
         </div>
+
 
         <!-- Modal Overlay -->
         <div v-if="selectedMovie" :class="['modal-overlay', { show: selectedMovie }]"></div>
@@ -40,37 +40,33 @@
 
 
 <script>
-import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
+
 export default {
     name: 'moviesPage',
     data() {
         return {
-            moviesData: [],
             selectedMovie: null,
         }
     },
-    methods: {
-        fetchMovies() {
-            const config = {
-                headers: {
-                    accept: 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NGJlMWUzMTk2YzcwZmM2ZjUxOTEwYmFlN2JjZGRhZCIsIm5iZiI6MTcyOTY4MDczMi45MDEsInN1YiI6IjY3MThkNTVjYzc4MDJjYzUwMzU5YTcxMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mmd_oVE0cpvWbt-rGore0a7z864gQUWvcR87QE-Tg24'
-                }
-            };
+    computed: {
+        ...mapState(['moviesData', 'searchTxt']),
+        // ...mapMutations(['searchTxt']),
 
-            axios
-                .get(
-                    'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc',
-                    config
-                )
-                .then(response => {
-                    this.moviesData = response.data.results; // Ensure tableData matches your response data structure
-                    console.log(response.data);
-                })
-                .catch(error => {
-                    console.error("error in fetching movies", error); // Use console.error for errors
-                });
+        paginatedMovies() {
+            if (!this.searchTxt) {
+                return this.moviesData;
+            }
+            const searchLower = this.searchTxt.toLowerCase();
+            return this.moviesData.filter(movie => movie.title.toLowerCase().includes(searchLower));
+        }
+    },
+    methods: {
+        ...mapActions(['fetchMovies']),
+        fetchMovies() {
+            this.$store.dispatch('fetchData', { apiType: 'movies' });
         },
+
         getImageUrl(path) {
             if (!path) {
                 return 'path/to/placeholder.jpg';

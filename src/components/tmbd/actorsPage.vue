@@ -1,6 +1,6 @@
 <template>
     <div class="actors row p-5">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in actorsData" :key="index">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(item, index) in paginatedActors" :key="index">
             <div class="card actors__card actors-card p-3" @click="openModel(item)">
                 <img :src="getImageUrl(item.profile_path)" alt="poster" class="actors-card__image card-img-top">
                 <div class="card-body ">
@@ -35,36 +35,28 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 export default {
     name: 'actorsPage',
     data() {
         return {
-            actorsData: [],
             selectedActor: null,
         }
     },
+    computed: {
+        ...mapState(['actorsData', 'searchTxt']),
+        paginatedActors() {
+            if (!this.searchTxt) {
+                return this.actorsData;
+            }
+            const searchLower = this.searchTxt.toLowerCase();
+            return this.actorsData.filter(actor => actor.name.toLowerCase().includes(searchLower));
+        }
+    },
     methods: {
-        fetchactors() {
-            const config = {
-                headers: {
-                    accept: 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NGJlMWUzMTk2YzcwZmM2ZjUxOTEwYmFlN2JjZGRhZCIsIm5iZiI6MTcyOTY4MDczMi45MDEsInN1YiI6IjY3MThkNTVjYzc4MDJjYzUwMzU5YTcxMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mmd_oVE0cpvWbt-rGore0a7z864gQUWvcR87QE-Tg24'
-                }
-            };
-
-            axios
-                .get(
-                    'https://api.themoviedb.org/3/person/popular?language=en-US&page=1',
-                    config
-                )
-                .then(response => {
-                    this.actorsData = response.data.results;
-                    console.log(response.data);
-                })
-                .catch(error => {
-                    console.error("error in fetching actors", error);
-                });
+        ...mapActions(['mapActors']),
+        fetchActors() {
+            this.$store.dispatch('fetchData', { apiType: 'actors' });
         },
         getImageUrl(path) {
             if (!path) {
@@ -75,15 +67,15 @@ export default {
 
         openModel(actor) {
             this.selectedActor = actor;
-            console.log("selected movie", this.selectedActor);
+            console.log("selected actor", this.selectedActor);
         },
         closeModal() {
             this.selectedActor = null;
         },
     },
     mounted() {
-        this.fetchactors();
-    }
+        this.fetchActors();
+    },
 
 }
 

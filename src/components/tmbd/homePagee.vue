@@ -5,11 +5,11 @@
                 <h1>Welcome</h1>
                 <h2>Millons of movies, Tv shows and people to discover more</h2>
             </div>
-            <div class="d-flex justify-content-center align-items-baseline">
+            <!-- <div class="d-flex justify-content-center align-items-baseline">
                 <input type="text" placeholder="search for any movie, tv shows, actor etc...."
-                    class="tmbdBody__searchInput p-3">
-                <i class="fas fa-search tmbdBody__searchIcon"></i>
-            </div>
+                    class="tmbdBody__searchInput p-3" v-model="searchTxt">
+                <i class="fas fa-search tmbdBody__searchIcon" @click="performSearch"></i>
+            </div> -->
         </div>
         <div class="trending">
             <h1 class="trending__heading ms-3 mt-2"><strong>Trending</strong></h1>
@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 </template>
 
@@ -29,7 +29,8 @@ export default {
     name: "homePagee",
     data() {
         return {
-            trendingData: []
+            trendingData: [],
+            searchTxt: '',
         }
     },
     methods: {
@@ -59,7 +60,13 @@ export default {
                 return 'path/to/placeholder.jpg';
             }
             return `https://image.tmdb.org/t/p/w500${path}`;
-        }
+        },
+
+        // performSearch() {
+        //     const result = this.searchTxt;
+        //     console.log("searchTerm", result);
+
+        // }
     },
     mounted() {
         this.fetchTrending();
