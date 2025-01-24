@@ -1,12 +1,12 @@
 import { createStore } from "vuex";
 import axios from "axios";
-
 const store = createStore({
   state: {
     searchTxt: "",
     moviesData: [],
     tvshowsData: [],
     actorsData: [],
+    trendingData: [],
   },
 
   mutations: {
@@ -21,6 +21,9 @@ const store = createStore({
     },
     setActorsData(state, data) {
       state.actorsData = data;
+    },
+    setTrendingData(state, data) {
+      state.trendingData = data;
     },
   },
 
@@ -74,22 +77,29 @@ const store = createStore({
 
       fetchAllPages();
     },
+    async fetchTrending({ commit }) {
+      const config = {
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NGJlMWUzMTk2YzcwZmM2ZjUxOTEwYmFlN2JjZGRhZCIsIm5iZiI6MTcyOTY4MDczMi45MDEsInN1YiI6IjY3MThkNTVjYzc4MDJjYzUwMzU5YTcxMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.mmd_oVE0cpvWbt-rGore0a7z864gQUWvcR87QE-Tg24",
+        },
+      };
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/trending/all/day?language=en-US`,
+          config
+        );
+        if (response.data && response.data.results) {
+          commit("setTrendingData", response.data.results);
+        } else {
+          console.warn("No results found in API response.");
+        }
+      } catch (error) {
+        console.error("Error fetching trending data:", error);
+      }
+    },
   },
-
-//   getters: {
-//     getSearchTxt(state) {
-//       return state.searchTxt;
-//     },
-//     getMoviesData(state) {
-//       return state.moviesData;
-//     },
-//     getTvShowsData(state) {
-//       return state.tvshowsData;
-//     },
-//     getActorsData(state) {
-//       return state.actorsData;
-//     },
-//   },
 });
 
 export default store;

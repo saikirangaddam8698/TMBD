@@ -54,7 +54,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['mapActors']),
+        ...mapActions(['fetchActors']),
         fetchActors() {
             this.$store.dispatch('fetchData', { apiType: 'actors' });
         },
